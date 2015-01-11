@@ -1,0 +1,103 @@
+Scala 来做这部分吧
+爬下小组饭网站-将信息存储到mongodb,
+之后nodejs,angular写个前端，将订单信息汇总,之后由服务端发送个订单的批处理脚本，去远程下单
+
+
+# readings
+    [httpclient tutorial](https://hc.apache.org/httpcomponents-client-ga/tutorial/html/index.html)
+    [working with mongodb]
+        http://docs.mongodb.org/ecosystem/drivers/scala/
+        http://www.mkyong.com/mongodb/java-mongodb-convert-json-data-to-dbobject/
+        http://docs.mongodb.org/ecosystem/tutorial/getting-started-with-java-driver/
+    
+    ## xpath
+        [java xpath tutorial](http://viralpatel.net/blogs/java-xml-xpath-tutorial-parse-xml/)
+
+
+      
+# Build Commands
+    mkdir weKanban
+    cd weKanban
+    sbt np
+    mkdir project
+    cd project
+    touch build.scala
+
+
+TODO:
+    configure unit test
+    http request
+    how to parse html document
+    working with java
+    working with mongodb
+    configure a logger
+    
+
+    
+# Models Design
+    //食品类别
+    Cates
+        name: 
+        link:
+
+    //每个食品类别下的内容
+    CateContents
+
+        [
+            merchants_name:[
+                subcate_name:[
+                    @Food,
+                    ...
+                ],
+            ],
+
+            ....
+        ]
+
+        荤素配下面的
+        [
+            merchants_name:[
+
+                hun:[
+                    @Food,...
+                ],
+                su:[
+                    @food,...
+                ],
+                zhushi:[
+                    @food,...
+                ]                
+            ]
+        ]
+
+    //食物条目
+    Food
+        name
+        price
+        refid
+
+
+
+# httpclient
+    ## connection settings
+        HTTP/1.1 states that HTTP connections can be re-used for multiple requests per default. 
+        HTTP/1.0 compliant endpoints can also use a mechanism to explicitly communicate their preference to keep connection 
+        alive and use it for multiple requests. HTTP agents can also keep idle connections alive for 
+        a certain period time in case a connection to the same target host is needed for subsequent requests. The ability to 
+        keep connections alive is usually refered to as connection persistence. HttpClient fully supports connection persistence.
+            就是说能够再一次请求完之后不断开的链接就是一个持久化的链接
+
+        ### HTTP connection routing
+            httpclient支持多个hop(即指定的访问节点)的跳转链接(proxy chaining)
+
+            #### plain routes vs tunnelled routes
+                Plain routes are established by connecting to the target or the first and only proxy. 
+                Tunnelled routes are established by connecting to the first and tunnelling through a chain of proxies to the target. 
+        #### Route computation 
+            httpclient 对 proxy chaining 的类支持
+
+
+scalaVersion := "2.10.1"
+
+#
+    mongod
