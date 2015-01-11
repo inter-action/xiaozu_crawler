@@ -1,8 +1,22 @@
+*.class
+*.log
+
 .DS_Store
-.cache
+
+# IDEA AND ECLIPSE
 .classpath
 .idea/
 .project
+
+# sbt specific
+.cache
+.history/
+dist/*
+target/
+lib_managed/
+src_managed/
+
+project/boot/
 project/project/
 project/target/
-target/
+project/plugins/project/
