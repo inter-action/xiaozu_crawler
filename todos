@@ -78,10 +78,12 @@ TODO:
     //食物条目
     Food
         name
-        price
         form_id
         form_value
-        
+        fid
+        bid
+        [price]
+
 
 
 
