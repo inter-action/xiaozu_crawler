@@ -19,7 +19,7 @@ object httpclient {
       val entity = response.getEntity()
       //EntityUtils.consume(entity)//ensure the repsonse is fully cosumed
       val resStr = EntityUtils.toString(entity)
-      //println(resStr)
+      println(resStr)
 
     } finally {
       response.close()

@@ -58,15 +58,20 @@ TODO:
         [
             merchants_name:[
 
-                hun:[
-                    @Food,...
-                ],
-                su:[
-                    @food,...
-                ],
-                zhushi:[
-                    @food,...
-                ]                
+                subcate_name: [
+                    {
+                        comb_name: "hun",
+                        foods: [
+                            @Food,... 
+                        ]
+                    },
+                    {
+                        comb_name: "su",
+                        foods: [
+                            @Food,... 
+                        ]
+                    }... 
+                ]
             ]
         ]
 
@@ -74,7 +79,10 @@ TODO:
     Food
         name
         price
-        refid
+        form_id
+        form_value
+        
+
 
 
 
