@@ -24,16 +24,6 @@ Scala 来做这部分吧
     touch build.scala
 
 
-TODO:
-    configure unit test
-    http request
-    how to parse html document
-    working with java
-    working with mongodb
-    configure a logger
-    
-
-    
 # Models Design
     //食品类别
     Cates
@@ -43,42 +33,69 @@ TODO:
     //每个食品类别下的内容
     CateContents
 
-        [
-            merchants_name:[
-                subcate_name:[
-                    @Food,
-                    ...
-                ],
-            ],
+        {
+            cate: {
+                name:
+                link
+            },
 
-            ....
-        ]
+            contents: [
+                {
+                    merchants_name: 
+                    contents:[
+                        {
+                            subcate_name:
+                            foods: [
+                                @Food,
+                                ...
+                            ]
+                        },
+                        ...
+                    ],
+                },
+                ...
+            ]
+        }
 
         荤素配下面的
-        [
-            merchants_name:[
+        {
+            cate: {
+                name:
+                link: 
+            },
 
-                subcate_name: [
-                    {
-                        comb_name: "hun",
-                        foods: [
-                            @Food,... 
-                        ]
-                    },
-                    {
-                        comb_name: "su",
-                        foods: [
-                            @Food,... 
-                        ]
-                    }... 
-                ]
+            contents: [
+                {   
+                    merchants_name:
+                    contents:[
+                        {
+                            subcate_name: "combos",
+                            contents: [
+                                {
+                                    combo_name: 
+                                    foods: [ @Foods, ...]
+
+                                },..
+                            ]
+                        },
+
+                        {
+                            subcate_name:
+                            foods: [
+                                @Foods, ....
+                            ]
+                        }
+
+                    ]
+                },
+                ..
             ]
-        ]
+        }
 
     //食物条目
     Food
         name
-        form_id
+        form_name
         form_value
         fid
         bid
@@ -107,7 +124,24 @@ TODO:
             httpclient 对 proxy chaining 的类支持
 
 
-scalaVersion := "2.10.1"
+# 
+    ## starts mongo
+        mongod --dbpath F:\data\db #start server end
 
-#
-    mongod
+    ## scala feathure
+        method cury
+        auto resouce close 这属于什么
+
+
+
+TODO:
+    DONE:
+        how to parse html document
+        http request
+        working with java
+        working with mongodb
+        商户停售的判断
+
+    PENDING:
+        configure unit test
+        configure a logger
