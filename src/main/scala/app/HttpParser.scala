@@ -83,8 +83,10 @@ object HttpParser {
       var node = cardNodes.item(_i)
       var _nMerchant: Node = xpath.compile(".//A[contains(@class, 'shop_aw')][1]").evaluate(node, XPathConstants.NODE).asInstanceOf[Node]
       //获得子类下的商户名
-      var _tMerchant = _nMerchant.getFirstChild().getTextContent()
-      println(s"\n+ sub cat merchant name is: ${_tMerchant} \n")
+      val _tMerchant = _nMerchant.getFirstChild().getTextContent()
+      //商户ID
+      val bid = xpath.compile(".//FORM/INPUT[@type='hidden'][@name='bid']/@value").evaluate(node, XPathConstants.STRING).asInstanceOf[String]
+      println(s"\n+ sub cat merchant - merchant name: ${_tMerchant},  bid: $bid \n")
 
       //用提交按钮来判断是否商户是否停售
       val _eDisable = xpath.compile(".//FORM/DIV[@class='ozb']/INPUT[@type='submit']").evaluate(node, XPathConstants.NODE).asInstanceOf[Element]
@@ -96,6 +98,7 @@ object HttpParser {
       }else{
         val catContentBuilder = BasicDBObjectBuilder.start()
         catContentBuilder.add("merchants_name", _tMerchant)
+        catContentBuilder.add("bid", bid)
         var mMerchantContents: java.util.List[DBObject] = new util.ArrayList[DBObject]()
         catContentBuilder.add("contents", mMerchantContents)
 
@@ -140,37 +143,39 @@ object HttpParser {
 
         //获得额外的主食订单
         var _nExtraMainFood = xpath.compile(".//FORM/DIV[@class='mt-o cf']").evaluate(node, XPathConstants.NODE).asInstanceOf[Node]
-        var subcateName = xpath.compile("./DIV[@class='torange clearfix']/B/text()").evaluate(_nExtraMainFood, XPathConstants.STRING).asInstanceOf[String]
-        subcateName = removeSpaces(subcateName)
 
+        if (_nExtraMainFood != null){//荤素配下面的节点可能会为空
+          var subcateName = xpath.compile("./DIV[@class='torange clearfix']/B/text()").evaluate(_nExtraMainFood, XPathConstants.STRING).asInstanceOf[String]
+          subcateName = removeSpaces(subcateName)
 
-        println("subcate name is : " + subcateName)
-        mComboBuilder = BasicDBObjectBuilder.start()
-        mComboBuilder.add("subcate_name", subcateName)
-        val _mfoods: java.util.List[DBObject] = new util.ArrayList[DBObject]()
-        mComboBuilder.add("foods", _mfoods)
+          println("subcate name is : " + subcateName)
+          mComboBuilder = BasicDBObjectBuilder.start()
+          mComboBuilder.add("subcate_name", subcateName)
+          val _mfoods: java.util.List[DBObject] = new util.ArrayList[DBObject]()
+          mComboBuilder.add("foods", _mfoods)
 
-        var _nSubcateFoods = xpath.compile("./UL/LI[@data-price]").evaluate(_nExtraMainFood, XPathConstants.NODESET).asInstanceOf[NodeList]
-        for (_m <- 0 until _nSubcateFoods.getLength){
-          var node = _nSubcateFoods.item(_m)
-          // get xpath attibute
-          var foodname = xpath.compile("./DIV[1]/@title").evaluate(node, XPathConstants.STRING).asInstanceOf[String]
-          var price = node.asInstanceOf[Element].getAttribute("data-price")
-          var _eInput = xpath.compile(".//INPUT[@type='text'][1]").evaluate(node, XPathConstants.NODE).asInstanceOf[Element]
-          var fid = _eInput.getAttribute("fid")
-          var bid = _eInput.getAttribute("bid")
-          //这两个字段貌似只有在点荤素配的时候才有用
-          var formName = _eInput.getAttribute("name")
-          var formValue = _eInput.getAttribute("value")
+          var _nSubcateFoods = xpath.compile("./UL/LI[@data-price]").evaluate(_nExtraMainFood, XPathConstants.NODESET).asInstanceOf[NodeList]
+          for (_m <- 0 until _nSubcateFoods.getLength){
+            var node = _nSubcateFoods.item(_m)
+            // get xpath attibute
+            var foodname = xpath.compile("./DIV[1]/@title").evaluate(node, XPathConstants.STRING).asInstanceOf[String]
+            var price = node.asInstanceOf[Element].getAttribute("data-price")
+            var _eInput = xpath.compile(".//INPUT[@type='text'][1]").evaluate(node, XPathConstants.NODE).asInstanceOf[Element]
+            var fid = _eInput.getAttribute("fid")
+            var bid = _eInput.getAttribute("bid")
+            //这两个字段貌似只有在点荤素配的时候才有用
+            var formName = _eInput.getAttribute("name")
+            var formValue = _eInput.getAttribute("value")
 
-          println(s"主食: $foodname, price: $price, fid: $fid, bid: $bid, formName: $formName, formValue: $formValue")
-          val foodBuilder = BasicDBObjectBuilder.start()
-            .add("name", foodname).add("form_name", formName).add("form_value", formValue).add("fid", fid).add("bid", bid)
-            .add("price", price)
-          _mfoods.add(foodBuilder.get())
+            println(s"主食: $foodname, price: $price, fid: $fid, bid: $bid, formName: $formName, formValue: $formValue")
+            val foodBuilder = BasicDBObjectBuilder.start()
+              .add("name", foodname).add("form_name", formName).add("form_value", formValue).add("fid", fid).add("bid", bid)
+              .add("price", price)
+            _mfoods.add(foodBuilder.get())
+          }
+          mMerchantContents.add(mComboBuilder.get())
         }
 
-        mMerchantContents.add(mComboBuilder.get())
         catContents.add(catContentBuilder.get())
       }
     }
