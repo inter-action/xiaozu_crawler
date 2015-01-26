@@ -29,7 +29,7 @@ object App {
       println(s"linkname: ${arr._1}, link href: ${arr._2}")
     }
 
-    mongo.dropDB()
+    mongo.dropCollection(COLLECTION_NAME)
 
     val docs: ListBuffer[DBObject] = ListBuffer()
 
