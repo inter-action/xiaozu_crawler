@@ -234,17 +234,20 @@ object HttpParser {
 
           for (_k <- 0 until _nFoods.getLength()) {
             var _nf: Node = _nFoods.item(_k)
-            var price = _nf.asInstanceOf[Element].getAttribute("data-price")
+            val _nSoldout = xpath.compile(".//SPAN[@class='wu label_status_gray']").evaluate(_nf, XPathConstants.NODE)
+            if (_nSoldout == null){// 卖光了节点
+              var price = _nf.asInstanceOf[Element].getAttribute("data-price")
 
-            var fname = _nf.getChildNodes().item(1).asInstanceOf[Element].getAttribute("title")
-            var _nfinfo: Element = xpath.compile("./DIV/INPUT[@fid][1]").evaluate(_nf, XPathConstants.NODE).asInstanceOf[Element]
-            var fid = _nfinfo.getAttribute("fid")
-            var bid = _nfinfo.getAttribute("bid")
-            println(s" food name: $fname, fid: $fid, bid: $bid")
+              var fname = _nf.getChildNodes().item(1).asInstanceOf[Element].getAttribute("title")
+              var _nfinfo: Element = xpath.compile("./DIV/INPUT[@fid][1]").evaluate(_nf, XPathConstants.NODE).asInstanceOf[Element]
+              var fid = _nfinfo.getAttribute("fid")
+              var bid = _nfinfo.getAttribute("bid")
+              println(s" food name: $fname, fid: $fid, bid: $bid")
 
-            val foodBuilder = BasicDBObjectBuilder.start()
-            foodBuilder.add("name", fname).add("fid", fid).add("bid", bid).add("price", price)
-            mFoods.add(foodBuilder.get())
+              val foodBuilder = BasicDBObjectBuilder.start()
+              foodBuilder.add("name", fname).add("fid", fid).add("bid", bid).add("price", price)
+              mFoods.add(foodBuilder.get())
+            }
           }
 
           merContents.add(merContentBuilder.get())
