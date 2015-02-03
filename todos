@@ -23,6 +23,8 @@ Scala 来做这部分吧
     cd project
     touch build.scala
 
+    assembly # pacakge app in one jar
+
 
 # Models Design
     //食品类别

@@ -9,3 +9,5 @@ libraryDependencies ++= Seq(
     "net.sourceforge.nekohtml" % "nekohtml" % "1.9.21",
     "org.mongodb" % "mongo-java-driver" % "2.12.4"
 )
+
+mainClass in assembly := Some("app.App")
